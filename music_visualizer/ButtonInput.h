@@ -23,6 +23,7 @@ class ButtonInput
     void changePattern();
     void checkPatternChange();
     void debugButtonState(int button, bool button_state, String message);
+    void setButtonState(bool state);
     void initButtonInput(int _BUTTON);
 };
 

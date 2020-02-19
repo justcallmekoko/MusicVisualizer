@@ -121,9 +121,9 @@ void Patterns::doubleTracerLevel()
     this->tracerList[this->midway] = 0;
     this->tracerList[this->midway - 1] = 0;
   }
-    
-  this->shiftDoubleTracer();
+
   this->displayTracer();
+  this->shiftDoubleTracer();
 }
 
 void Patterns::tracerLevel()
@@ -142,8 +142,8 @@ void Patterns::tracerLevel()
   else
     this->tracerList[0] = 0;
 
-  this->shiftTracer();
   this->displayTracer();
+  this->shiftTracer();
 }
 
 void Patterns::shiftDoubleTracer()
@@ -155,7 +155,7 @@ void Patterns::shiftDoubleTracer()
   }
 
   // Shift pixels to the left of the midway point
-  for (int i = 0; i < midway; i++) {
+  for (int i = 0; i <= midway; i++) {
     this->tracerList[i - 1] = this->tracerList[i];
     this->tracerList[i] = 0;
   }

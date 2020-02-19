@@ -28,6 +28,8 @@ void setup() {
 
 void loop()
 {
+  patternObj.initPattern(patternObj.currentPattern);
+  
   downButton.checkPatternChange();
   upButton.checkPatternChange();
   cycleButton.checkPatternChange();
@@ -35,6 +37,4 @@ void loop()
   //patternObj.doubleLevel();
 
   //patternObj.tracerLevel();
-
-  patternObj.initPattern(patternObj.currentPattern);
 }

@@ -36,6 +36,12 @@ void ButtonInput::debugButtonState(int button, bool button_state, String message
     Serial.println("Button " + (String)button + " state is false: " + (String)message);
 }
 
+void ButtonInput::setButtonState(bool state)
+{
+  //Serial.println("Setting button " + (String)this->BUTTON + " " + (String)state);
+  this->current_button_state = state;
+}
+
 void ButtonInput::checkPatternChange()
 {
   // Check if button is actuated
@@ -47,7 +53,7 @@ void ButtonInput::checkPatternChange()
     if (!this->current_button_state)
     {
       Serial.println("Button pressed");
-      this->current_button_state = true;
+      this->setButtonState(true);
 
       // Check which button was pressed
       if (this->BUTTON == CYCLE_BUTTON) {
@@ -69,7 +75,7 @@ void ButtonInput::checkPatternChange()
 
     //this->debugButtonState(this->BUTTON, this->current_button_state, "Post check");
     
-    this->current_button_state = true;
+    this->setButtonState(true);
 
     //this->debugButtonState(this->BUTTON, this->current_button_state, "Pre hold check");
 
@@ -103,12 +109,12 @@ void ButtonInput::checkPatternChange()
   }
   else {
     //Serial.println("Setting button " + (String)this->BUTTON + " false");
-    this->current_button_state = false;
+    this->setButtonState(false);
     this->hold_count = 0;
   }
 
   if (digitalRead(this->BUTTON) == 1)
-    this->current_button_state = true;
+    this->setButtonState(true);
 }
 
 void ButtonInput::initButtonInput(int _BUTTON)
