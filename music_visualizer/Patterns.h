@@ -14,12 +14,13 @@
 #define audio1 A0
 #define audio2 A1
 
-#define NUM_PATTERN 3
+#define NUM_PATTERN 4
 
 // Patterns
-#define SINGLE 0
-#define DOUBLE 1
-#define TRACER 2
+#define SINGLE 10
+#define DOUBLE 11
+#define TRACER 12
+#define DOUBLE_TRACER 13
 
 extern Adafruit_NeoPixel strip;
 
@@ -53,14 +54,15 @@ class Patterns
   public:
     Patterns();
 
-    byte currentPattern PROGMEM = 0;
+    byte currentPattern PROGMEM = 13;
 
-    int TRACER_THRESHOLD = 300;
+    int TRACER_THRESHOLD = 550;
 
     // Patterns
     void singleLevel();
     void doubleLevel();
     void tracerLevel();
+    void doubleTracerLevel();
 
     // Aux methods
     void initPattern(uint8_t pattern);
@@ -73,6 +75,7 @@ class Patterns
     void resetWheel();
     void setupAudio();
     void setupStrip();
+    void shiftDoubleTracer();
     void shiftTracer();
     uint32_t Wheel(byte WheelPos);
 };

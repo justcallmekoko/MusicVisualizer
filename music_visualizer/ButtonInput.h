@@ -1,8 +1,12 @@
 #ifndef ButtonInput_h
 #define ButtonInput_h
 
+#include <String.h>
+#include <Arduino.h>
+
 #define HOLD_THRESHOLD 124
 #define CYCLE_BUTTON 2
+
 #define DOWN_BUTTON  7
 #define UP_BUTTON    3
 
@@ -18,7 +22,8 @@ class ButtonInput
     void adjustTracerThresh(int adjustment);
     void changePattern();
     void checkPatternChange();
-    void initButtonInput(int BUTTON);
+    void debugButtonState(int button, bool button_state, String message);
+    void initButtonInput(int _BUTTON);
 };
 
 #endif

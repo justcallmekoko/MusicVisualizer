@@ -16,6 +16,9 @@ void Patterns::initPattern(uint8_t pattern)
   else if (pattern == TRACER) {
     this->tracerLevel();
   }
+  else if (pattern == DOUBLE_TRACER) {
+    this->doubleTracerLevel();
+  }
 }
 
 void Patterns::convertSingle()
@@ -98,6 +101,31 @@ void Patterns::doubleLevel()
   }
 }
 
+void Patterns::doubleTracerLevel()
+{
+  this->readMSGEQ7();
+
+  // Determine which channel volume is greater
+  if (this->left[this->freq] > this->right[this->freq])
+    this->audio_input = this->left[this->freq];
+  else
+    this->audio_input = this->right[this->freq];
+
+  // Fire a shot
+  if (this->audio_input > TRACER_THRESHOLD) {
+    //Serial.println("audio_input: " + (String)audio_input);
+    this->tracerList[this->midway] = 1;
+    this->tracerList[this->midway - 1] = 1; 
+  }
+  else {
+    this->tracerList[this->midway] = 0;
+    this->tracerList[this->midway - 1] = 0;
+  }
+    
+  this->shiftDoubleTracer();
+  this->displayTracer();
+}
+
 void Patterns::tracerLevel()
 {
   this->readMSGEQ7();
@@ -116,6 +144,21 @@ void Patterns::tracerLevel()
 
   this->shiftTracer();
   this->displayTracer();
+}
+
+void Patterns::shiftDoubleTracer()
+{
+  // Shift pixels to the right of the midway point
+  for (int i = this->active_leds; i >= this->midway; i--) {
+    this->tracerList[i + 1] = this->tracerList[i];
+    this->tracerList[i] = 0;
+  }
+
+  // Shift pixels to the left of the midway point
+  for (int i = 0; i < midway; i++) {
+    this->tracerList[i - 1] = this->tracerList[i];
+    this->tracerList[i] = 0;
+  }
 }
 
 void Patterns::shiftTracer()

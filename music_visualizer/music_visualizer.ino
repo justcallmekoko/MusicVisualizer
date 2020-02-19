@@ -28,8 +28,8 @@ void setup() {
 
 void loop()
 {
-  upButton.checkPatternChange();
   downButton.checkPatternChange();
+  upButton.checkPatternChange();
   cycleButton.checkPatternChange();
   
   //patternObj.doubleLevel();
