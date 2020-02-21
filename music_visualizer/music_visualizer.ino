@@ -15,7 +15,7 @@ ButtonInput cycleButton(CYCLE_BUTTON);
 void setup() {
   Serial.begin(115200);
 
-  delay(1000);
+  delay(500);
 
   Serial.println(F("\n\nArduino Music Visualizer\n"));
 

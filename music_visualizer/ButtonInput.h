@@ -4,7 +4,7 @@
 #include <String.h>
 #include <Arduino.h>
 
-#define HOLD_THRESHOLD 124
+#define HOLD_THRESHOLD 100
 #define CYCLE_BUTTON 2
 
 #define DOWN_BUTTON  7
@@ -19,7 +19,7 @@ class ButtonInput
 
     int BUTTON;
     int hold_count = 0;
-    bool current_button_state = false;
+    boolean current_button_state = false;
 
     void adjustSetting(int adjustment);
     void adjustTracerThresh(int adjustment);
@@ -27,7 +27,7 @@ class ButtonInput
     void checkPatternChange();
     void debugButtonState(int button, bool button_state, String message);
     void setButtonState(bool state);
-    void initButtonInput(int _BUTTON);
+    void initButtonInput(int tBUTTON);
 };
 
 #endif

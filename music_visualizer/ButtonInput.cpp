@@ -138,8 +138,8 @@ void ButtonInput::checkPatternChange()
     this->setButtonState(true);
 }
 
-void ButtonInput::initButtonInput(int _BUTTON)
+void ButtonInput::initButtonInput(int tBUTTON)
 {
-  this->BUTTON = _BUTTON;
+  this->BUTTON = tBUTTON;
   pinMode(this->BUTTON, INPUT);
 }

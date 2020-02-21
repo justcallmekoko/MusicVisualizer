@@ -122,6 +122,25 @@ void Patterns::doubleLevel()
   }
 }
 
+void Patterns::tracerLevel()
+{
+  this->readMSGEQ7();
+
+  if (this->left[this->freq] > this->right[this->freq])
+    this->audio_input = this->left[this->freq];
+  else
+    this->audio_input = this->right[this->freq];
+
+  if (this->audio_input > TRACER_THRESHOLD) {
+    this->tracerList[0] = 1;
+  }
+  else
+    this->tracerList[0] = 0;
+
+  this->displayTracer();
+  this->shiftTracer();
+}
+
 void Patterns::doubleTracerLevel()
 {
   this->readMSGEQ7();
@@ -134,7 +153,6 @@ void Patterns::doubleTracerLevel()
 
   // Fire a shot
   if (this->audio_input > TRACER_THRESHOLD) {
-    //Serial.println("audio_input: " + (String)audio_input);
     this->tracerList[this->midway] = 1;
     this->tracerList[this->midway - 1] = 1; 
   }
@@ -147,26 +165,6 @@ void Patterns::doubleTracerLevel()
   this->shiftDoubleTracer();
 }
 
-void Patterns::tracerLevel()
-{
-  this->readMSGEQ7();
-
-  if (this->left[this->freq] > this->right[this->freq])
-    this->audio_input = this->left[this->freq];
-  else
-    this->audio_input = this->right[this->freq];
-
-  if (this->audio_input > TRACER_THRESHOLD) {
-    //Serial.println("audio_input: " + (String)audio_input);
-    this->tracerList[0] = 1;
-  }
-  else
-    this->tracerList[0] = 0;
-
-  this->displayTracer();
-  this->shiftTracer();
-}
-
 void Patterns::shiftDoubleTracer()
 {
   // Shift pixels to the right of the midway point
@@ -174,11 +172,16 @@ void Patterns::shiftDoubleTracer()
     this->tracerList[i + 1] = this->tracerList[i];
     this->tracerList[i] = 0;
   }
-
+ 
+  
   // Shift pixels to the left of the midway point
+  // This for loop cause current_button_state to fail for the
+  // up button during double tracer
   for (int i = 0; i <= midway; i++) {
-    this->tracerList[i - 1] = this->tracerList[i];
-    this->tracerList[i] = 0;
+    if (i != 0) { // Need this if statement or it will cause the issue above
+      this->tracerList[i - 1] = this->tracerList[i];
+      this->tracerList[i] = 0;
+    }
   }
 }
 
