@@ -5,7 +5,7 @@ Patterns::Patterns()
   
 }
 
-void Patterns::initPattern(uint8_t pattern)
+void Patterns::initPattern(int pattern)
 {
   if (pattern == SINGLE) {
     this->singleLevel();
@@ -19,6 +19,15 @@ void Patterns::initPattern(uint8_t pattern)
   else if (pattern == DOUBLE_TRACER) {
     this->doubleTracerLevel();
   }
+  else if (pattern == SETTING) {
+    this->settingLevel();
+  }
+}
+
+void Patterns::adjustMidway(int active)
+{
+  this->midway = this->active_leds / 2;
+  Serial.println("New midway: " + (String)this->midway);
 }
 
 void Patterns::convertSingle()
@@ -60,6 +69,18 @@ void Patterns::displayTracer()
       strip.setPixelColor(i, Wheel((i * 256 / 50 + this->k) % 256));
     else
       strip.setPixelColor(i, strip.Color(25, 0, 0));
+  }
+
+  strip.show();
+}
+
+void Patterns::settingLevel()
+{
+  for (int i = 0; i < NUM_LEDS; i++) {
+    if (i < this->active_leds)
+      strip.setPixelColor(i, strip.Color(255, 0, 0));
+    else
+      strip.setPixelColor(i, strip.Color(0, 0, 0));
   }
 
   strip.show();

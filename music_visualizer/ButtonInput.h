@@ -13,12 +13,15 @@
 class ButtonInput
 {
   private:
-    int BUTTON;
-    int hold_count = 0;
-    bool current_button_state = false;
+    
   public:
     ButtonInput(int button_pin);
 
+    int BUTTON;
+    int hold_count = 0;
+    bool current_button_state = false;
+
+    void adjustSetting(int adjustment);
     void adjustTracerThresh(int adjustment);
     void changePattern();
     void checkPatternChange();

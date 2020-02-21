@@ -14,13 +14,14 @@
 #define audio1 A0
 #define audio2 A1
 
-#define NUM_PATTERN 4
+#define NUM_PATTERN 5
 
 // Patterns
-#define SINGLE 10
-#define DOUBLE 11
-#define TRACER 12
-#define DOUBLE_TRACER 13
+#define SINGLE 0
+#define DOUBLE 1
+#define TRACER 2
+#define DOUBLE_TRACER 3
+#define SETTING 4
 
 extern Adafruit_NeoPixel strip;
 
@@ -36,9 +37,7 @@ class Patterns
     int band;
     int audio_input = 0;
     int freq = 0;
-
-    int active_leds = NUM_LEDS;
-    int midway = active_leds / 2;
+    
     int loop_max = 0;
     int k = 255;
     int decay = 0;
@@ -54,18 +53,23 @@ class Patterns
   public:
     Patterns();
 
-    byte currentPattern PROGMEM = 13;
+    int currentPattern PROGMEM = DOUBLE_TRACER;
+
+    int active_leds = NUM_LEDS;
+    int midway = active_leds / 2;
 
     int TRACER_THRESHOLD = 550;
 
     // Patterns
+    void settingLevel();
     void singleLevel();
     void doubleLevel();
     void tracerLevel();
     void doubleTracerLevel();
 
     // Aux methods
-    void initPattern(uint8_t pattern);
+    void adjustMidway(int active);
+    void initPattern(int pattern);
     void convertSingle();
     void convertDouble();
     void displayTracer();

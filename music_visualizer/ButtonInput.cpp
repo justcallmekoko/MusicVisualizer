@@ -8,6 +8,19 @@ ButtonInput::ButtonInput(int button_pin)
   this->initButtonInput(button_pin);
 }
 
+void ButtonInput::adjustSetting(int adjustment)
+{
+  patternObj.active_leds = patternObj.active_leds + adjustment;
+  if (patternObj.active_leds >= NUM_LEDS)
+    patternObj.active_leds = NUM_LEDS;
+  else if (patternObj.active_leds <= 0)
+    patternObj.active_leds = 0;
+
+  Serial.println("Active LEDs: " + (String)patternObj.active_leds);
+
+  patternObj.adjustMidway(patternObj.active_leds);
+}
+
 void ButtonInput::adjustTracerThresh(int adjustment)
 {
   patternObj.TRACER_THRESHOLD = patternObj.TRACER_THRESHOLD + adjustment;
@@ -22,8 +35,8 @@ void ButtonInput::adjustTracerThresh(int adjustment)
 void ButtonInput::changePattern()
 {
   patternObj.currentPattern++;
-  if (patternObj.currentPattern >= NUM_PATTERN + 10)
-    patternObj.currentPattern = 10;
+  if (patternObj.currentPattern >= NUM_PATTERN)
+    patternObj.currentPattern = 0;
   Serial.println("Pattern select: " + (String)patternObj.currentPattern);
   patternObj.resetWheel();
 }
@@ -60,16 +73,24 @@ void ButtonInput::checkPatternChange()
         this->changePattern();
       }
       else if (this->BUTTON == UP_BUTTON) {
-        // Check which pattern is active
+        // Tracer patterns
         if ((patternObj.currentPattern == TRACER) || 
             (patternObj.currentPattern == DOUBLE_TRACER))
           this->adjustTracerThresh(1);
+
+        // Setting pattern
+        else if (patternObj.currentPattern == SETTING)
+          this->adjustSetting(1);
       }
       else if (this->BUTTON == DOWN_BUTTON) {
-        // Check which pattern is active
+        // Tracer patterns
         if ((patternObj.currentPattern == TRACER) || 
             (patternObj.currentPattern == DOUBLE_TRACER))
           this->adjustTracerThresh(-1);
+
+        // Setting pattern
+        else if (patternObj.currentPattern == SETTING)
+          this->adjustSetting(-1);
       }
     }
 
@@ -79,7 +100,7 @@ void ButtonInput::checkPatternChange()
 
     //this->debugButtonState(this->BUTTON, this->current_button_state, "Pre hold check");
 
-    // Button hold check
+    // Button hold check for tracer
     if ((this->BUTTON == UP_BUTTON) || (this->BUTTON == DOWN_BUTTON)) {
 
       // Don't increase if we are already at the threshold
