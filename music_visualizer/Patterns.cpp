@@ -2,7 +2,52 @@
 
 Patterns::Patterns()
 {
-  
+
+}
+
+void Patterns::saveEEPROM(long addr, int value, bool fix)
+{
+
+  if (fix) {
+    int modu = value % 255; // the remainder of value after deviding by 255
+    int whole_mult = (value - modu) / 255; // The number of times 255 goes into the value
+
+    EEPROM.update(addr, modu);
+    EEPROM.update(MOD_ADDR, whole_mult);
+
+    Serial.println("Saved remainder " + (String)modu + " to addr " + (String)addr);
+    Serial.println("Saved multiplier " + (String)whole_mult + " to addr " + (String)MOD_ADDR);
+  }
+  else {
+    EEPROM.update(addr, value);
+    Serial.println("Saved value " + (String)value + " to addr " + (String)addr);
+  }
+}
+
+void Patterns::loadActiveLEDs()
+{
+  this->active_leds = EEPROM.read(ACTIVE_LED_ADDR);
+  if ((this->active_leds < 0) || (this->active_leds > NUM_LEDS)) {
+    this->active_leds = NUM_LEDS;
+    Serial.println("Loaded active_leds from default: " + (String)this->active_leds);
+    this->saveEEPROM(ACTIVE_LED_ADDR, this->active_leds);
+  }
+  else
+    Serial.println("Loaded active_leds from EEPROM: " + (String)this->active_leds);
+}
+
+void Patterns::loadTracerThresh()
+{
+  int remainder = EEPROM.read(TRACER_THRESH_ADDR);
+  int multiplier = EEPROM.read(MOD_ADDR);
+  this->TRACER_THRESHOLD = (multiplier * 255) + remainder;
+  if ((this->TRACER_THRESHOLD < 0) || (this->TRACER_THRESHOLD > 1023)){
+    this->TRACER_THRESHOLD = DEFAULT_TRACER_THRESH;
+    Serial.println("Loaded TRACER_THRESHOLD from default: " + (String)this->TRACER_THRESHOLD);
+    this->saveEEPROM(TRACER_THRESH_ADDR, this->TRACER_THRESHOLD);
+  }
+  else
+    Serial.println("Loaded TRACER_THRESHOLD from EEPROM: " + (String)this->TRACER_THRESHOLD);
 }
 
 void Patterns::initPattern(int pattern)
@@ -251,6 +296,9 @@ void Patterns::setupAudio()
   pinMode(reset, OUTPUT);
   digitalWrite(reset, LOW);
   digitalWrite(strobe, HIGH);
+
+  this->loadActiveLEDs();
+  this->loadTracerThresh();
 }
 
 void Patterns::setupStrip()

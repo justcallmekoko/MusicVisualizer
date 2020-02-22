@@ -18,6 +18,7 @@ void ButtonInput::adjustSetting(int adjustment)
 
   Serial.println("Active LEDs: " + (String)patternObj.active_leds);
 
+  patternObj.saveEEPROM(ACTIVE_LED_ADDR, patternObj.active_leds);
   patternObj.adjustMidway(patternObj.active_leds);
 }
 
@@ -28,6 +29,8 @@ void ButtonInput::adjustTracerThresh(int adjustment)
     patternObj.TRACER_THRESHOLD = 0;
   else if (patternObj.TRACER_THRESHOLD >= 1023)
     patternObj.TRACER_THRESHOLD = 1023;
+
+  patternObj.saveEEPROM(TRACER_THRESH_ADDR, patternObj.TRACER_THRESHOLD, true);
 
   Serial.println("Tracer Threshold: " + (String)patternObj.TRACER_THRESHOLD);
 }

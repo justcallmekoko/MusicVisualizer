@@ -2,6 +2,7 @@
 #define Patterns_h
 
 #include <Adafruit_NeoPixel.h>
+#include <EEPROM.h>
 //#include <SimpleList.h>
 
 #define DOUBLE_THRESHOLD 80
@@ -22,6 +23,13 @@
 #define TRACER 2
 #define DOUBLE_TRACER 3
 #define SETTING 4
+
+// EEPROM Addrs
+#define TRACER_THRESH_ADDR 0
+#define ACTIVE_LED_ADDR    (sizeof(long) * 1)
+#define MOD_ADDR           (sizeof(long) * 2)
+
+#define DEFAULT_TRACER_THRESH 550
 
 extern Adafruit_NeoPixel strip;
 
@@ -81,6 +89,9 @@ class Patterns
     void setupStrip();
     void shiftDoubleTracer();
     void shiftTracer();
+    void loadActiveLEDs();
+    void loadTracerThresh();
+    void saveEEPROM(long addr, int value, bool fix = false);
     uint32_t Wheel(byte WheelPos);
 };
 
