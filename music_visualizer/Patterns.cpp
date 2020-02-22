@@ -38,6 +38,10 @@ void Patterns::loadActiveLEDs()
 
 void Patterns::loadTracerThresh()
 {
+  // Need to calculate tracer threshold because we cannot
+  // store numbers greater than 255 in EEPROM
+  // tracer threshold is calculated using the int
+  // stored in (MOD_ADDR * 255) + the int stored in TRACER_THRESH_ADDR
   int remainder = EEPROM.read(TRACER_THRESH_ADDR);
   int multiplier = EEPROM.read(MOD_ADDR);
   this->TRACER_THRESHOLD = (multiplier * 255) + remainder;
