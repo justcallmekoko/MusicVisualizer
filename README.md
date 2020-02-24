@@ -7,7 +7,7 @@
   - <a href="https://www.youtube.com/channel/UCQdi3MDHHMm7u3cMkEY329Q">YouTube</a>
   <br>
   <br>
-  <b>A music visualizer based on the ATMEGA32U4-MU.</b>
+  <b>A music visualizer based on the ATMEGA328P-AU.</b>
 </p>
 
 # Table of Cadence
