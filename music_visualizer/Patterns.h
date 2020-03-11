@@ -14,6 +14,7 @@
 #define reset 5
 #define audio1 A0
 #define audio2 A1
+#define SETTING_TIMER 500
 
 #define NUM_PATTERN 5
 
@@ -68,6 +69,8 @@ class Patterns
 
     int TRACER_THRESHOLD = 550;
 
+    uint32_t initTime = 0;
+
     // Patterns
     void settingLevel();
     void singleLevel();
@@ -77,7 +80,7 @@ class Patterns
 
     // Aux methods
     void adjustMidway(int active);
-    void initPattern(int pattern);
+    void initPattern(int pattern, uint32_t currentTime);
     void convertSingle();
     void convertDouble();
     void displayTracer();
@@ -91,7 +94,9 @@ class Patterns
     void shiftTracer();
     void loadActiveLEDs();
     void loadTracerThresh();
+    void showTracerThresh();
     void saveEEPROM(long addr, int value, bool fix = false);
+    bool checkSettingTimer(uint32_t currentTime);
     uint32_t Wheel(byte WheelPos);
 };
 

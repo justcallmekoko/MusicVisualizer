@@ -12,6 +12,8 @@ ButtonInput upButton(UP_BUTTON);
 ButtonInput downButton(DOWN_BUTTON);
 ButtonInput cycleButton(CYCLE_BUTTON);
 
+uint32_t currentTime  = 0;
+
 void setup() {
   Serial.begin(115200);
 
@@ -28,7 +30,9 @@ void setup() {
 
 void loop()
 {
-  patternObj.initPattern(patternObj.currentPattern);
+  currentTime = millis();
+
+  patternObj.initPattern(patternObj.currentPattern, currentTime);
   
   downButton.checkPatternChange();
   upButton.checkPatternChange();

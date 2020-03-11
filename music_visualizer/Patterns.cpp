@@ -54,22 +54,30 @@ void Patterns::loadTracerThresh()
     Serial.println("Loaded TRACER_THRESHOLD from EEPROM: " + (String)this->TRACER_THRESHOLD);
 }
 
-void Patterns::initPattern(int pattern)
+void Patterns::initPattern(int pattern, uint32_t currentTime)
 {
-  if (pattern == SINGLE) {
-    this->singleLevel();
+  if (!this->checkSettingTimer(currentTime)) {
+    if (pattern == SINGLE) {
+      this->singleLevel();
+    }
+    else if (pattern == DOUBLE) {
+      this->doubleLevel();
+    }
+    else if (pattern == TRACER) {
+      this->tracerLevel();
+    }
+    else if (pattern == DOUBLE_TRACER) {
+      this->doubleTracerLevel();
+    }
+    else if (pattern == SETTING) {
+      this->settingLevel();
+    }
   }
-  else if (pattern == DOUBLE) {
-    this->doubleLevel();
-  }
-  else if (pattern == TRACER) {
-    this->tracerLevel();
-  }
-  else if (pattern == DOUBLE_TRACER) {
-    this->doubleTracerLevel();
-  }
-  else if (pattern == SETTING) {
-    this->settingLevel();
+  else {
+    if (pattern == TRACER)
+      this->showTracerThresh();
+    else if (pattern == DOUBLE_TRACER)
+      this->showTracerThresh();
   }
 }
 
@@ -133,6 +141,30 @@ void Patterns::settingLevel()
   }
 
   strip.show();
+}
+
+void Patterns::showTracerThresh()
+{
+  long product = (long)TRACER_THRESHOLD * (long)this->active_leds;
+  int thresh_react = abs(product / 1023L);
+  //Serial.println("(" + (String)product + " * " + (String)this->active_leds + ") / " + (String)thresh_react + " = " + (String)thresh_react + "/" + (String)this->active_leds);
+  for (int i = 0; i < NUM_LEDS; i++) {
+    if (i < thresh_react)
+      strip.setPixelColor(i, strip.Color(0, 0, 255));
+    else
+      strip.setPixelColor(i, strip.Color(0, 0, 0));
+  }
+  strip.show();
+}
+
+bool Patterns::checkSettingTimer(uint32_t currentTime) {
+
+  // has not been X seconds yet
+  if (currentTime - this->initTime < SETTING_TIMER)
+    return true;
+  else {
+    return false;
+  }
 }
 
 void Patterns::singleLevel()

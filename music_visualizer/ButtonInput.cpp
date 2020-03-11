@@ -78,8 +78,10 @@ void ButtonInput::checkPatternChange()
       else if (this->BUTTON == UP_BUTTON) {
         // Tracer patterns
         if ((patternObj.currentPattern == TRACER) || 
-            (patternObj.currentPattern == DOUBLE_TRACER))
+            (patternObj.currentPattern == DOUBLE_TRACER)) {
           this->adjustTracerThresh(1);
+          patternObj.initTime = millis();
+        }
 
         // Setting pattern
         else if (patternObj.currentPattern == SETTING)
@@ -88,8 +90,10 @@ void ButtonInput::checkPatternChange()
       else if (this->BUTTON == DOWN_BUTTON) {
         // Tracer patterns
         if ((patternObj.currentPattern == TRACER) || 
-            (patternObj.currentPattern == DOUBLE_TRACER))
+            (patternObj.currentPattern == DOUBLE_TRACER)) {
           this->adjustTracerThresh(-1);
+          patternObj.initTime = millis();
+        }
 
         // Setting pattern
         else if (patternObj.currentPattern == SETTING)
@@ -118,14 +122,18 @@ void ButtonInput::checkPatternChange()
         if (this->BUTTON == UP_BUTTON) {
           // Check which pattern is active
           if ((patternObj.currentPattern == TRACER) || 
-              (patternObj.currentPattern == DOUBLE_TRACER))
+              (patternObj.currentPattern == DOUBLE_TRACER)) {
             this->adjustTracerThresh(1);
+            patternObj.initTime = millis();
+          }
         }
         else if (this->BUTTON == DOWN_BUTTON) {
           // Check which pattern is active
           if ((patternObj.currentPattern == TRACER) || 
-              (patternObj.currentPattern == DOUBLE_TRACER))
+              (patternObj.currentPattern == DOUBLE_TRACER)) {
             this->adjustTracerThresh(-1);
+            patternObj.initTime = millis();
+          }
         }
       }
     }
