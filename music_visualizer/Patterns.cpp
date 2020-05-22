@@ -243,7 +243,8 @@ void Patterns::pulsePattern()
     this->audio_input = this->right[this->freq];
 
   if (led_level > 0.0)
-    led_level = led_level - 0.01;
+    led_level = led_level / 1.05;
+    //led_level = led_level - 0.01;
   else
     led_level = 0.0;
 
@@ -261,7 +262,7 @@ void Patterns::pulsePattern()
   for (int i = 0; i < active_leds; i++)
       strip.setPixelColor(i, strip.Color(255 * led_level, 0 * led_level, 0 * led_level));
 
-  Serial.println("led_level: " + (String)led_level + " -> " + (String)(255 * led_level) + " " + (String)(0 * led_level) + " " + (String)(0 * led_level));
+  //Serial.println("led_level: " + (String)led_level + " -> " + (String)(255 * led_level) + " " + (String)(0 * led_level) + " " + (String)(0 * led_level));
   strip.show();
 }
 
