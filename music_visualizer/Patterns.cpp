@@ -69,14 +69,25 @@ void Patterns::initPattern(int pattern, uint32_t currentTime)
     else if (pattern == DOUBLE_TRACER) {
       this->doubleTracerLevel();
     }
+    else if (pattern == PULSE) {
+      this->pulsePattern();
+    }
+    else if (pattern == FREQ_PULSE) {
+      this->freqPulsePattern();
+    }
+    else if (pattern == FREQ_PULSE_TAI) {
+      this->freqPulsePattern();
+    }
     else if (pattern == SETTING) {
       this->settingLevel();
     }
   }
   else {
-    if (pattern == TRACER)
-      this->showTracerThresh();
-    else if (pattern == DOUBLE_TRACER)
+    if ((pattern == TRACER) ||
+        (pattern == DOUBLE_TRACER) ||
+        (pattern == FREQ_PULSE) ||
+        (pattern == FREQ_PULSE_TAI) ||
+        (pattern == PULSE))
       this->showTracerThresh();
   }
 }
@@ -220,6 +231,135 @@ void Patterns::tracerLevel()
 
   this->displayTracer();
   this->shiftTracer();
+}
+
+void Patterns::pulsePattern()
+{
+  this->readMSGEQ7();
+
+  if (this->left[this->freq] > this->right[this->freq])
+    this->audio_input = this->left[this->freq];
+  else
+    this->audio_input = this->right[this->freq];
+
+  if (led_level > 0.0)
+    led_level = led_level - 0.01;
+  else
+    led_level = 0.0;
+
+  if (led_level < 0.0)
+    led_level = 0.0;
+
+  if (audio_input > TRACER_THRESHOLD)
+  {
+    led_level = (float)audio_input / 1000.0;
+    if (led_level > 1.00)
+      led_level = 1.00;
+    Serial.println("audio_input: " + (String)audio_input + " -> led_level: " + (String)led_level);
+  }
+
+  for (int i = 0; i < active_leds; i++)
+      strip.setPixelColor(i, strip.Color(255 * led_level, 0 * led_level, 0 * led_level));
+
+  Serial.println("led_level: " + (String)led_level + " -> " + (String)(255 * led_level) + " " + (String)(0 * led_level) + " " + (String)(0 * led_level));
+  strip.show();
+}
+
+void Patterns::freqPulsePattern()
+{
+
+  int skill_points = 255;
+  
+  this->readMSGEQ7();
+
+  // Calculate zoning
+  int zoning = active_leds / 7;
+  int half_zone = zoning / 2;
+
+  // Iterate through all freqs
+  for (int i = 0; i < 7; i++) {
+    
+    // Select left or right chanel
+    if (this->left[i] > this->right[i])
+      this->audio_input = this->left[i];
+    else
+      this->audio_input = this->right[i];
+
+    // Fade LEDs over time
+    if (freq_led_level[i] > 0.0)
+      //freq_led_level[i] = freq_led_level[i] / 1.1;
+      freq_led_level[i] = freq_led_level[i] - 0.015;
+    else
+      freq_led_level[i] = 0.00;
+
+    // Bottom out the level if below zero
+    if (freq_led_level[i] < 0.0)
+      freq_led_level[i] = 0.00;
+
+    // Generate new random color
+    if (freq_led_level[i] <= 0.05) {
+      int r = random(0, skill_points);
+      int g = random(0, skill_points - r);
+      int b = random(0, skill_points - r - g);
+
+
+      /*
+      this->freq_colors[i][0] = random(0, 255);
+      this->freq_colors[i][1] = random(0, 255);
+      this->freq_colors[i][2] = random(0, 255);
+      */
+      this->freq_colors[i][0] = r;
+      this->freq_colors[i][1] = g;
+      this->freq_colors[i][2] = b;
+
+      //Serial.println("New Color: (" + (String)r + ", " + (String)g + ", " + (String)b + ")");
+      
+    }
+
+    if (audio_input > TRACER_THRESHOLD)
+    {
+      freq_led_level[i] = (float)audio_input / 1000.0;
+      if (freq_led_level[i] > 1.00)
+        freq_led_level[i] = 1.00;
+      //Serial.println("audio_input: " + (String)audio_input + " -> led_level: " + (String)freq_led_level[i]);
+    }
+
+    float modi = 0;
+
+    for (int x = 0; x < zoning; x++) {
+      if (x <= half_zone)
+        modi = (float)x;
+      else
+        modi = (float)zoning - (float)x;
+
+      float level_mod = modi / (float)half_zone;
+      float inverse_mod = 1.00 - level_mod;
+      //strip.setPixelColor(x + (zoning * i), strip.Color(freq_colors[i][0] * freq_led_level[i], freq_colors[i][1] * freq_led_level[i], freq_colors[i][2] * freq_led_level[i]));
+
+      if (this->currentPattern == FREQ_PULSE)
+        strip.setPixelColor(x + (zoning * i), strip.Color(level_mod * (freq_colors[i][0] * freq_led_level[i]), 
+                                                          level_mod * (freq_colors[i][1] * freq_led_level[i]),
+                                                          level_mod * (freq_colors[i][2] * freq_led_level[i])));
+      
+      if (this->currentPattern == FREQ_PULSE_TAI)
+        strip.setPixelColor(x + (zoning * i), strip.Color((level_mod * freq_colors[i][0] + (80 * inverse_mod)) * freq_led_level[i], 
+                                                          (level_mod * freq_colors[i][1] + (5 * inverse_mod)) * freq_led_level[i],
+                                                          (level_mod * freq_colors[i][2] + (1 * inverse_mod)) * freq_led_level[i]));
+
+    }
+  }
+
+  /*
+  Serial.println((String)freq_led_level[0] + " " + 
+                 (String)freq_led_level[1] + " " + 
+                 (String)freq_led_level[2] + " " + 
+                 (String)freq_led_level[3] + " " + 
+                 (String)freq_led_level[4] + " " + 
+                 (String)freq_led_level[5] + " " + 
+                 (String)freq_led_level[6] + " ");
+  */
+
+  strip.show();
 }
 
 void Patterns::doubleTracerLevel()
