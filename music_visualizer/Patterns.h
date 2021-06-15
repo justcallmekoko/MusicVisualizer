@@ -83,7 +83,7 @@ class Patterns
   public:
     Patterns();
 
-    int currentPattern PROGMEM = FREQ_PULSE;
+    int currentPattern PROGMEM = DOUBLE_TRACER;
 
     int active_leds = NUM_LEDS;
     int midway = active_leds / 2;
