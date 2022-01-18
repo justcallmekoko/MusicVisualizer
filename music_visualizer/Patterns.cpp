@@ -15,25 +15,26 @@ void Patterns::saveEEPROM(long addr, int value, bool fix)
     EEPROM.update(addr, modu);
     EEPROM.update(MOD_ADDR, whole_mult);
 
-    Serial.println("Saved remainder " + (String)modu + " to addr " + (String)addr);
-    Serial.println("Saved multiplier " + (String)whole_mult + " to addr " + (String)MOD_ADDR);
+    //Serial.println("Saved remainder " + (String)modu + " to addr " + (String)addr);
+    //Serial.println("Saved multiplier " + (String)whole_mult + " to addr " + (String)MOD_ADDR);
   }
   else {
     EEPROM.update(addr, value);
-    Serial.println("Saved value " + (String)value + " to addr " + (String)addr);
+    //Serial.println("Saved value " + (String)value + " to addr " + (String)addr);
   }
 }
 
 void Patterns::loadActiveLEDs()
 {
+  //Serial.println("Loading active LEDs");
   this->active_leds = EEPROM.read(ACTIVE_LED_ADDR);
   if ((this->active_leds < 0) || (this->active_leds > NUM_LEDS)) {
     this->active_leds = NUM_LEDS;
-    Serial.println("Loaded active_leds from default: " + (String)this->active_leds);
-    this->saveEEPROM(ACTIVE_LED_ADDR, this->active_leds);
+  //  Serial.println("Loaded active_leds from default: " + (String)this->active_leds);
+    this->saveEEPROM(ACTIVE_LED_ADDR, this->active_leds, true);
   }
-  else
-    Serial.println("Loaded active_leds from EEPROM: " + (String)this->active_leds);
+  //else
+  //  Serial.println("Loaded active_leds from EEPROM: " + (String)this->active_leds);
 }
 
 void Patterns::loadTracerThresh()
@@ -47,11 +48,11 @@ void Patterns::loadTracerThresh()
   this->TRACER_THRESHOLD = (multiplier * 255) + remainder;
   if ((this->TRACER_THRESHOLD < 0) || (this->TRACER_THRESHOLD > 1023)){
     this->TRACER_THRESHOLD = DEFAULT_TRACER_THRESH;
-    Serial.println("Loaded TRACER_THRESHOLD from default: " + (String)this->TRACER_THRESHOLD);
+    //Serial.println("Loaded TRACER_THRESHOLD from default: " + (String)this->TRACER_THRESHOLD);
     this->saveEEPROM(TRACER_THRESH_ADDR, this->TRACER_THRESHOLD);
   }
-  else
-    Serial.println("Loaded TRACER_THRESHOLD from EEPROM: " + (String)this->TRACER_THRESHOLD);
+  //else
+    //Serial.println("Loaded TRACER_THRESHOLD from EEPROM: " + (String)this->TRACER_THRESHOLD);
 }
 
 void Patterns::initPattern(int pattern, uint32_t currentTime)
@@ -475,19 +476,39 @@ void Patterns::setupAudio()
   digitalWrite(strobe, HIGH);
 
   this->loadActiveLEDs();
-  this->loadTracerThresh();
+  //this->loadTracerThresh();
+  //Serial.println("Done doing a setup");
 }
 
 void Patterns::setupStrip()
 {
   for (int i = 0; i < this->active_leds; i++)
     this->tracerList[i] = 0;
+
+  for (int i = 0; i < this->active_leds + 1; i++)
+    strip.setPixelColor(i, strip.Color(0, 0, 0));
+  strip.show();
+
+  strip = Adafruit_NeoPixel(this->active_leds, LED_PIN, NEO_GRB + NEO_KHZ800);
     
   strip.begin();
   strip.setBrightness(BRIGHTNESS);
   for (int i = 0; i < this->active_leds; i++)
     strip.setPixelColor(i, strip.Color(0, 0, 0));
   strip.show();
+}
+
+// Slightly different, this makes the rainbow equally distributed throughout
+void Patterns::rainbowCycle(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
 }
 
 uint32_t Patterns::Wheel(byte WheelPos) {

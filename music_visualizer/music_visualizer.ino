@@ -4,7 +4,8 @@
 #include "Patterns.h"
 #include "ButtonInput.h"
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+//Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip;
 
 Patterns patternObj;
 
@@ -26,6 +27,11 @@ void setup() {
   
   Serial.println(F("Setting LEDs..."));
   patternObj.setupStrip();
+
+  //patternObj.setupAudio();
+
+  //patternObj.rainbowCycle(20);
+  Serial.println("All set: " + (String)patternObj.active_leds);
 }
 
 void loop()

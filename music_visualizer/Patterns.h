@@ -7,7 +7,7 @@
 
 #define DOUBLE_THRESHOLD 80
 //#define TRACER_THRESHOLD 300
-#define NUM_LEDS 150
+#define NUM_LEDS 255
 #define LED_PIN 6
 #define BRIGHTNESS 100
 #define strobe 4
@@ -118,6 +118,7 @@ class Patterns
     void loadActiveLEDs();
     void loadTracerThresh();
     void showTracerThresh();
+    void rainbowCycle(uint8_t wait);
     void saveEEPROM(long addr, int value, bool fix = false);
     bool checkSettingTimer(uint32_t currentTime);
     uint32_t Wheel(byte WheelPos);

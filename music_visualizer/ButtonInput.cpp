@@ -20,6 +20,9 @@ void ButtonInput::adjustSetting(int adjustment)
 
   patternObj.saveEEPROM(ACTIVE_LED_ADDR, patternObj.active_leds);
   patternObj.adjustMidway(patternObj.active_leds);
+
+  //strip = Adafruit_NeoPixel(patternObj.active_leds, LED_PIN, NEO_GRB + NEO_KHZ800);
+  patternObj.setupStrip();
 }
 
 void ButtonInput::adjustTracerThresh(int adjustment)

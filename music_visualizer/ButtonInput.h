@@ -3,12 +3,15 @@
 
 #include <String.h>
 #include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
 
 #define HOLD_THRESHOLD 100
 #define CYCLE_BUTTON 2
 
 #define DOWN_BUTTON  7
 #define UP_BUTTON    3
+
+extern Adafruit_NeoPixel strip;
 
 class ButtonInput
 {
